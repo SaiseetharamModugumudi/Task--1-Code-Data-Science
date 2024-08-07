@@ -1,0 +1,181 @@
+Task-1
+
+NORMAL TASK
+##GlobalTerrorism-Exploratory Data Analysis
+
+#step-1
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+#step-2
+data=pd.read_csv("D:\excel pdf\globalterrorism.csv", encoding="latin1")
+df=pd.DataFrame(data)
+print("Data has been successfully imported")
+df.head()
+
+#step-3
+df.info()
+
+#step-4
+df.shape
+
+#step-5
+df.columns
+
+#step-6
+for i in df.columns:
+    print(i,end=", ")
+
+#step-7
+df=df[["iyear","imonth","iday","country_txt","region_txt","provstate","city",
+       "latitude","longitude","location","summary","attacktype1_txt","targtype1_txt",
+       "gname","motive","weaptype1_txt","nkill","nwound","addnotes"]]
+df.head()
+
+#step-8
+df.rename(columns={"iyear":"Year","imonth":"Month","iday":"Day","country_txt":"Country",
+                   "region_txt":"Region","provstate":"Province/State","city":"City",
+                   "latitude":"Latitude","longitude":"Longitude","location":"Location",
+                   "summary":"Summary","attacktype1_txt":"Attack Type","targtype1_txt":"Target Type",
+                   "gname":"Group Name","motive":"Motive","weaptype1_txt":"Weapon Type",
+                   "nkill":"Killed","nwound":"Wounded","addnotes":"Add Notes"},inplace=True)
+
+#step-9
+df.head()
+
+#step-10
+df.info()
+
+#step-11
+df.shape()
+
+#step-12
+df.isnull().sum()
+
+#step-13
+df["Killed"]=df["Killed"].fillna(0)
+df["Wounded"]=df["Wounded"].fillna(0)
+df["Casualty"]=df["Killed"]+df["Wounded"]
+
+#step-14
+df.describe()
+
+#step-15
+reg=pd.crosstab(df.Year,df.Region)
+reg.head()
+
+#step-16
+reg.plot(kind="area", stacked=False, alpha=0.5,figsize=(20,10))
+plt.title("Region wise attacks",fontsize=20)
+plt.xlabel("Years",fontsize=20)
+plt.ylabel("Number of Attacks",fontsize=20)
+plt.show()
+
+#step-17
+yc=df[["Year","Casualty"]].groupby("Year").sum()
+yc.head()
+
+#step-18
+yc.plot(0kind="bar",color="cornflowerblue",figsize=(15,6))
+plt.title("Year wise Casualties",fontsize=13)
+plt.xlabel("Years",fontsize=13)
+plt.xticks(fontsize=12)
+plt.ylabel("Number of Casualties",fontsize=13)
+plt.show()
+
+#step-19
+yk=df[["Year","Killed"]].groupby("Year").sum()
+yk.head()
+
+#step-20
+yw=df[["Year","Wounded"]].groupby("Year").sum()
+yw.head()
+
+#step-21
+fig=plt.figure()
+ax0=fig.add_subplot(2,1,1)
+ax1=fig.add_subplot(2,1,2)
+
+#step-22
+#Killed
+yk.plot(kind="bar",color="cornflowerblue",figsize=(15,15),ax=ax0)
+ax0.set_title("People Killed in each Year")
+ax0.set_xlabel("Years")
+ax0.set_ylabel("Number of People Killed") 
+
+#step-23
+#Wounded
+yw.plot(kind="bar",color="cornflowerblue",figsize=(15,15),ax=ax1)
+ax1.set_title("People Wounded in each Year")
+ax1.set_xlabel("Years")
+ax1.set_ylabel("Number of People Wounded")
+plt.show()
+
+#step-24
+regt=reg.transpose()
+regt["Total"]=regt.sum(axis=1)
+ra=regt["Total"].sort_values(ascending=False)
+ra
+
+#step-25
+ra.plot(kind="bar",figsize=(15,6))
+plt.title("Total Number of Attacks in each Region from 1970-2017")
+plt.xlabel("Region")
+plt.ylabel("Number of Attacks")
+plt.show()
+
+#step-26
+rc=df[["Region","Casualty"]].groupby("Region").sum().sort_values(by="Casualty",ascending=False)
+rc
+
+#step-27
+rc.plot(kind="bar",color="cornflowerblue",figsize=(15,6))
+plt.title("Region wise Casualties",fontsize=13)
+plt.xlabel("Regions",fontsize=13)
+plt.xticks(fontsize=12)
+plt.ylabel("Number of Casualties",fontsize=13)
+plt.show()
+
+#step-28
+rk=df[["Region","Killed"]].groupby("Region").sum().sort_values(by="Killed",ascending=False)
+rk
+
+#step-29
+rw=df[["Region","Wounded"]].groupby("Region").sum().sort_values(by="Wounded",ascending=False)
+rw
+
+#step-30
+fig=plt.figure()
+ax0=fig.add_subplot(1,2,1)
+ax1=fig.add_subplot(1,2,2)
+
+#step-31
+#Killed
+rk.plot(kind="bar",color="cornflowerblue",figsize=(15,6),ax=ax0)
+ax0.set_title("People Killed in each Region")
+ax0.set_xlabel("Regions")
+ax0.set_ylabel("Number of People Killed")
+
+#step-32
+#Wounded
+rw.plot(kind="bar",color="cornflowerblue",figsize=(15,6),ax=ax1)
+ax1.set_title("People Wounded in each Region")
+ax1.set_xlabel("Regions")
+ax1.set_ylabel("Number of People Wounded")
+plt.show()
+
+#step-33
+ct=df["Country"].value_counts().head(10)
+ct
+
+#step-34
+ct.plot(kind="bar",color="cornflowerblue",figsize=(15,6))
+plt.title("Country wise Attacks",fontsize=13)
+plt.xlabel("Countries",fontsize=13)
+plt.xticks(fontsize=12)
+plt.ylabel("Number of Attacks",fontsize=13)
+plt.show()
